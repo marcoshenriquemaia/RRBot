@@ -4,7 +4,7 @@ import getNumber from "../../utils/getNumber/index.js";
 const Perks = async (ENV) => {
   const url = "https://rivalregions.com/#slide/profile";
 
-  const browser = await puppeteer.launch({ignoreDefaultArgs: ['--disable-extensions']});
+  const browser = await puppeteer.launch({ignoreDefaultArgs: ['--disable-extensions'], headless: false});
   const page = await browser.newPage();
   await page.goto(url);
   await page.setCookie(
@@ -47,7 +47,7 @@ const Perks = async (ENV) => {
 
     const splitedData = data.split(':')
     
-    if (splitedData.length < 3) return false
+    if (splitedData.length < 3) return 'textArea not found'
 
     return {
       perk: splitedData[0],
@@ -77,7 +77,7 @@ const Perks = async (ENV) => {
           const $item = $itemList[itemPosition]
           const $hasTimer = $container.querySelector('.no_imp.hasCountdown')
 
-          if ($hasTimer) return resolve(false)
+          if ($hasTimer) return resolve('has timer')
 
           const $currentPerkLevel = $item.querySelector('.yellow')
           const currentPerkLevel = await getNumber($currentPerkLevel?.textContent)
@@ -94,7 +94,7 @@ const Perks = async (ENV) => {
               console.log('$button', $button)
 
               $button.click()
-              return resolve(true)
+              return resolve('Perk adicionado com dolar')
             }, 1000)
           } else if (info.type === 'G') {
             setTimeout(() => {
@@ -102,11 +102,11 @@ const Perks = async (ENV) => {
               const $button = $buttonWrapper.querySelector('.button_blue')
 
               $button.click()
-              return resolve(true)
+              return resolve('Perk adicionado com gold')
             }, 1000)
           }
 
-          resolve($itemList.textContent);
+          resolve('Perk adicionado');
 
         };
 
@@ -117,9 +117,7 @@ const Perks = async (ENV) => {
     return getInfos()
   }, info)
 
-  if (up === undefined) console.log(`Perk ${info.type} + 1`)
-
-  console.log('up', up)
+  console.log(up)
 
   setTimeout(() => browser.close(), 2000)
 };
