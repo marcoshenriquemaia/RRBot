@@ -1,0 +1,19 @@
+{
+  "name": "RRBot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/marcoshenriquemaia/RRBot.git",
+  "author": "marcoshenriquemaia <henriquemarcosmaia@gmail.com>",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon index.js"
+  },
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "puppeteer": "^10.4.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.14"
+  }
+}
