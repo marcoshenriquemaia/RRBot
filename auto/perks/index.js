@@ -4,7 +4,7 @@ import getNumber from "../../utils/getNumber/index.js";
 const Perks = async (ENV) => {
   const url = "https://rivalregions.com/#slide/profile";
 
-  const browser = await puppeteer.launch({ignoreDefaultArgs: ['--disable-extensions'], headless: false});
+  const browser = await puppeteer.launch({ignoreDefaultArgs: ['--disable-extensions']});
   const page = await browser.newPage();
   await page.goto(url);
   await page.setCookie(
