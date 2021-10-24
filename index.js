@@ -12,7 +12,7 @@ const run = () => {
   }
 
   Perks(ENV)
-  setTimeout(run, 20000)
+  setTimeout(run, 30000)
 };
 
 run()
