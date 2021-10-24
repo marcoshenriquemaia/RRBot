@@ -4,7 +4,7 @@ import getNumber from "../../utils/getNumber/index.js";
 const Perks = async (ENV) => {
   const url = "https://rivalregions.com/#slide/profile";
 
-  const browser = await puppeteer.launch({ignoreDefaultArgs: ['--disable-extensions']});
+  const browser = await puppeteer.launch({ignoreDefaultArgs: ['--disable-extensions'], headless: false });
   const page = await browser.newPage();
   await page.goto(url);
   await page.setCookie(
@@ -95,7 +95,7 @@ const Perks = async (ENV) => {
 
               $button.click()
               return resolve('Perk adicionado com dolar')
-            }, 1000)
+            }, 5000)
           } else if (info.type === 'G') {
             setTimeout(() => {
               const $buttonWrapper = document.querySelectorAll('#perk_target #perk_target_4 > div')[1]
@@ -103,7 +103,7 @@ const Perks = async (ENV) => {
 
               $button.click()
               return resolve('Perk adicionado com gold')
-            }, 1000)
+            }, 5000)
           }
 
           resolve('Perk adicionado');
@@ -119,7 +119,7 @@ const Perks = async (ENV) => {
 
   console.log(up)
 
-  setTimeout(() => browser.close(), 2000)
+  setTimeout(() => browser.close(), 3000)
 };
 
 export default Perks;
