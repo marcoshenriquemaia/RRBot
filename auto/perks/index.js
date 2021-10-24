@@ -67,75 +67,77 @@ const Perks = async (ENV) => {
   await page.reload();
   await page.exposeFunction("getNumber", getNumber);
 
-  setTimeout(async () => {
-    const up = await page.evaluate((info) => {
-      const perkSequence = ["F", "E", "R"];
+  const up = await page.evaluate((info) => {
+    const perkSequence = ["F", "E", "R"];
 
-      const getInfos = () => {
-        return new Promise((resolve) => {
-          const recursive = async () => {
-            const $itemList = document.querySelectorAll(
-              "#index_perks_list .perk_item.pointer.ib_border"
-            );
-            const $container = document.querySelector("#index_perks_list");
+    const getInfos = () => {
+      return new Promise((resolve) => {
+        const recursive = async () => {
+          const $itemList = document.querySelectorAll(
+            "#index_perks_list .perk_item.pointer.ib_border"
+          );
+          const $container = document.querySelector("#index_perks_list");
 
-            if (!$itemList[0]) return setTimeout(recursive, 100);
+          if (!$itemList[0]) return setTimeout(recursive, 100);
 
-            const itemPosition = perkSequence.indexOf(info.perk);
-            const $item = $itemList[itemPosition];
-            const $hasTimer = $container.querySelector(".no_imp.hasCountdown");
+          const itemPosition = perkSequence.indexOf(info.perk);
+          const $item = $itemList[itemPosition];
+          const $hasTimer = $container.querySelector(".no_imp.hasCountdown");
 
-            console.log($item);
+          if ($hasTimer) return resolve("has timer");
 
-            if ($hasTimer) return resolve("has timer");
+          if (!$item) return setTimeout(recursive, 100);
 
-            const $currentPerkLevel = $item.querySelector(".yellow");
-            const currentPerkLevel = await getNumber(
-              $currentPerkLevel?.textContent
-            );
+          console.log($item);
 
-            if (currentPerkLevel >= info.max) return resolve(false);
+          const $currentPerkLevel = $item.querySelector(".yellow");
+          const currentPerkLevel = await getNumber(
+            $currentPerkLevel?.textContent
+          );
 
-            $currentPerkLevel.click();
+          if (currentPerkLevel >= info.max) return resolve(false);
 
-            if (info.type === "$") {
-              setTimeout(() => {
-                const $buttonWrapper = document.querySelectorAll(
-                  "#perk_target #perk_target_4 > div"
-                )[0];
-                const $button = $buttonWrapper.querySelector(".button_blue");
+          $currentPerkLevel.click();
 
-                console.log("$button", $button);
+          if (info.type === "$") {
+            setTimeout(() => {
+              const $buttonWrapper = document.querySelectorAll(
+                "#perk_target #perk_target_4 > div"
+              )[0];
+              const $button = $buttonWrapper.querySelector(".button_blue");
 
-                $button.click();
-                return resolve("Perk adicionado com dolar");
-              }, 5000);
-            } else if (info.type === "G") {
-              setTimeout(() => {
-                const $buttonWrapper = document.querySelectorAll(
-                  "#perk_target #perk_target_4 > div"
-                )[1];
-                const $button = $buttonWrapper.querySelector(".button_blue");
+              if (!$button) return setTimeout(recursive, 100);
 
-                $button.click();
-                return resolve("Perk adicionado com gold");
-              }, 5000);
-            }
+              $button.click();
+              return resolve("Perk adicionado com dolar");
+            }, 5000);
+          } else if (info.type === "G") {
+            setTimeout(() => {
+              const $buttonWrapper = document.querySelectorAll(
+                "#perk_target #perk_target_4 > div"
+              )[1];
+              const $button = $buttonWrapper.querySelector(".button_blue");
 
-            resolve("Perk adicionado");
-          };
+              if (!$button) return setTimeout(recursive, 100);
 
-          recursive();
-        });
-      };
+              $button.click();
+              return resolve("Perk adicionado com gold");
+            }, 5000);
+          }
 
-      return getInfos();
-    }, info);
+          resolve("Perk adicionado");
+        };
 
-    console.log(up);
+        recursive();
+      });
+    };
 
-    setTimeout(() => browser.close(), 3000)
-  }, 2000);
+    return getInfos();
+  }, info);
+
+  console.log(up);
+
+  setTimeout(() => browser.close(), 3000);
 };
 
 export default Perks;
