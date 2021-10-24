@@ -101,29 +101,25 @@ const Perks = async (ENV) => {
           $currentPerkLevel.click();
 
           if (info.type === "$") {
-            setTimeout(() => {
-              const $buttonWrapper = document.querySelectorAll(
-                "#perk_target #perk_target_4 > div"
-              )[0];
-              const $button = $buttonWrapper.querySelector(".button_blue");
+            const $buttonWrapper = document.querySelectorAll(
+              "#perk_target #perk_target_4 > div"
+            )[0];
+            const $button = $buttonWrapper.querySelector(".button_blue");
 
-              if (!$button) return setTimeout(recursive, 100);
+            if (!$button) return setTimeout(recursive, 100);
 
-              $button.click();
-              return resolve("Perk adicionado com dolar");
-            }, 5000);
+            $button.click();
+            return resolve("Perk adicionado com dolar");
           } else if (info.type === "G") {
-            setTimeout(() => {
-              const $buttonWrapper = document.querySelectorAll(
-                "#perk_target #perk_target_4 > div"
-              )[1];
-              const $button = $buttonWrapper.querySelector(".button_blue");
+            const $buttonWrapper = document.querySelectorAll(
+              "#perk_target #perk_target_4 > div"
+            )[1];
+            const $button = $buttonWrapper.querySelector(".button_blue");
 
-              if (!$button) return setTimeout(recursive, 100);
+            if (!$button) return setTimeout(recursive, 100);
 
-              $button.click();
-              return resolve("Perk adicionado com gold");
-            }, 5000);
+            $button.click();
+            return resolve("Perk adicionado com gold");
           }
 
           resolve("Perk adicionado");
