@@ -4,7 +4,9 @@ import getNumber from "../../utils/getNumber/index.js";
 const Perks = async (ENV) => {
   const url = "https://rivalregions.com/#slide/profile";
 
-  const browser = await puppeteer.launch({ignoreDefaultArgs: ['--disable-extensions']});
+  const browser = await puppeteer.launch({
+    ignoreDefaultArgs: ["--disable-extensions"],
+  });
   const page = await browser.newPage();
   await page.goto(url);
   await page.setCookie(
@@ -39,87 +41,101 @@ const Perks = async (ENV) => {
           resolve($textArea.textContent);
         };
 
-        recursive()
+        recursive();
       });
     };
 
     const data = await getSettings();
 
-    const splitedData = data.split(':')
-    
-    if (splitedData.length < 3) return 'textArea not found'
+    const splitedData = data.split(":");
+
+    if (splitedData.length < 3) return "textArea not found";
 
     return {
       perk: splitedData[0],
       max: Number(splitedData[1]),
-      type: splitedData[2]
+      type: splitedData[2],
     };
   });
 
-  if (!info) return console.error('Informações mal formatadas ou não preenchidas em "Sobre mim"')
+  if (!info)
+    return console.error(
+      'Informações mal formatadas ou não preenchidas em "Sobre mim"'
+    );
 
-  await page.goto('https://rivalregions.com/#overview');
+  await page.goto("https://rivalregions.com/#overview");
   await page.reload();
-  await page.exposeFunction('getNumber', getNumber)
+  await page.exposeFunction("getNumber", getNumber);
 
-  const up = await page.evaluate((info) => {
-    const perkSequence = ['F', 'E', 'R']
+  setTimeout(async () => {
+    const up = await page.evaluate((info) => {
+      const perkSequence = ["F", "E", "R"];
 
-    const getInfos = () => {
-      return new Promise((resolve) => {
-        const recursive = async () => {
-          const $itemList = document.querySelectorAll("#index_perks_list .perk_item.pointer.ib_border");
-          const $container = document.querySelector('#index_perks_list')
-          
-          if (!$itemList[0]) return setTimeout(recursive, 100);
+      const getInfos = () => {
+        return new Promise((resolve) => {
+          const recursive = async () => {
+            const $itemList = document.querySelectorAll(
+              "#index_perks_list .perk_item.pointer.ib_border"
+            );
+            const $container = document.querySelector("#index_perks_list");
 
-          const itemPosition = perkSequence.indexOf(info.perk)
-          const $item = $itemList[itemPosition]
-          const $hasTimer = $container.querySelector('.no_imp.hasCountdown')
+            if (!$itemList[0]) return setTimeout(recursive, 100);
 
-          if ($hasTimer) return resolve('has timer')
+            const itemPosition = perkSequence.indexOf(info.perk);
+            const $item = $itemList[itemPosition];
+            const $hasTimer = $container.querySelector(".no_imp.hasCountdown");
 
-          const $currentPerkLevel = $item.querySelector('.yellow')
-          const currentPerkLevel = await getNumber($currentPerkLevel?.textContent)
+            console.log($item);
 
-          if (currentPerkLevel >= info.max) return resolve(false)
-          
-          $currentPerkLevel.click()
+            if ($hasTimer) return resolve("has timer");
 
-          if (info.type === '$') {
-            setTimeout(() => {
-              const $buttonWrapper = document.querySelectorAll('#perk_target #perk_target_4 > div')[0]
-              const $button = $buttonWrapper.querySelector('.button_blue')
+            const $currentPerkLevel = $item.querySelector(".yellow");
+            const currentPerkLevel = await getNumber(
+              $currentPerkLevel?.textContent
+            );
 
-              console.log('$button', $button)
+            if (currentPerkLevel >= info.max) return resolve(false);
 
-              $button.click()
-              return resolve('Perk adicionado com dolar')
-            }, 5000)
-          } else if (info.type === 'G') {
-            setTimeout(() => {
-              const $buttonWrapper = document.querySelectorAll('#perk_target #perk_target_4 > div')[1]
-              const $button = $buttonWrapper.querySelector('.button_blue')
+            $currentPerkLevel.click();
 
-              $button.click()
-              return resolve('Perk adicionado com gold')
-            }, 5000)
-          }
+            if (info.type === "$") {
+              setTimeout(() => {
+                const $buttonWrapper = document.querySelectorAll(
+                  "#perk_target #perk_target_4 > div"
+                )[0];
+                const $button = $buttonWrapper.querySelector(".button_blue");
 
-          resolve('Perk adicionado');
+                console.log("$button", $button);
 
-        };
+                $button.click();
+                return resolve("Perk adicionado com dolar");
+              }, 5000);
+            } else if (info.type === "G") {
+              setTimeout(() => {
+                const $buttonWrapper = document.querySelectorAll(
+                  "#perk_target #perk_target_4 > div"
+                )[1];
+                const $button = $buttonWrapper.querySelector(".button_blue");
 
-        recursive()
-      });
-    };
+                $button.click();
+                return resolve("Perk adicionado com gold");
+              }, 5000);
+            }
 
-    return getInfos()
-  }, info)
+            resolve("Perk adicionado");
+          };
 
-  console.log(up)
+          recursive();
+        });
+      };
 
-  setTimeout(() => browser.close(), 3000)
+      return getInfos();
+    }, info);
+
+    console.log(up);
+
+    setTimeout(() => browser.close(), 3000)
+  }, 2000);
 };
 
 export default Perks;
