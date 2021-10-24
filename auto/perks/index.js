@@ -6,6 +6,7 @@ const Perks = async (ENV) => {
 
   const browser = await puppeteer.launch({
     ignoreDefaultArgs: ["--disable-extensions"],
+    headless: false
   });
   const page = await browser.newPage();
   await page.goto(url);
@@ -137,7 +138,7 @@ const Perks = async (ENV) => {
 
   console.log(up);
 
-  setTimeout(() => browser.close(), 3000);
+  // setTimeout(() => browser.close(), 3000);
 };
 
 export default Perks;
