@@ -4,25 +4,8 @@ import getNumber from "../../utils/getNumber/index.js";
 const Perks = async (ENV) => {
   const url = "https://rivalregions.com/#slide/profile";
 
-  console.log({
-    name: "rr",
-    value: ENV.rr,
-  },
-  {
-    name: "rr_f",
-    value: ENV.rr_f,
-  },
-  {
-    name: "rr_id",
-    value: ENV.rr_id,
-  },
-  {
-    name: "rr_add",
-    value: ENV.rr_add,
-  })
-
   const browser = await puppeteer.launch({
-    headless: false,
+    // headless: false,
   });
   const page = await browser.newPage();
   await page.goto(url);
