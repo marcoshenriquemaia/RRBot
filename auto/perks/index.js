@@ -4,9 +4,25 @@ import getNumber from "../../utils/getNumber/index.js";
 const Perks = async (ENV) => {
   const url = "https://rivalregions.com/#slide/profile";
 
+  console.log({
+    name: "rr",
+    value: ENV.rr,
+  },
+  {
+    name: "rr_f",
+    value: ENV.rr_f,
+  },
+  {
+    name: "rr_id",
+    value: ENV.rr_id,
+  },
+  {
+    name: "rr_add",
+    value: ENV.rr_add,
+  })
+
   const browser = await puppeteer.launch({
-    ignoreDefaultArgs: ["--disable-extensions"],
-    // headless: false
+    headless: false,
   });
   const page = await browser.newPage();
   await page.goto(url);
@@ -32,12 +48,20 @@ const Perks = async (ENV) => {
   await page.cookies(url);
   await page.reload();
   const info = await page.evaluate(async () => {
+    let attempts = 0;
+
     const getSettings = () => {
       return new Promise((resolve) => {
         const recursive = () => {
           const $textArea = document.querySelector(".prof_h #message");
 
-          if (!$textArea) return setTimeout(recursive, 100);
+          if (attempts === 20) return resolve("Token expired");
+
+          if (!$textArea) {
+            setTimeout(recursive, 100);
+            attempts++;
+            return;
+          }
 
           resolve($textArea.textContent);
         };
@@ -47,6 +71,8 @@ const Perks = async (ENV) => {
     };
 
     const data = await getSettings();
+
+    if (data === "Token expired") return "Token expired";
 
     const splitedData = data.split(":");
 
@@ -59,10 +85,17 @@ const Perks = async (ENV) => {
     };
   });
 
-  if (!info)
+  if (info === "Token expired") {
+    browser.close();
+    return console.error(info);
+  }
+
+  if (!info) {
+    browser.close();
     return console.error(
       'Informações mal formatadas ou não preenchidas em "Sobre mim"'
     );
+  }
 
   await page.goto("https://rivalregions.com/#overview");
   await page.reload();
@@ -88,8 +121,6 @@ const Perks = async (ENV) => {
           if ($hasTimer) return resolve("has timer");
 
           if (!$item) return setTimeout(recursive, 100);
-
-          console.log($item);
 
           const $currentPerkLevel = $item.querySelector(".yellow");
           const currentPerkLevel = await getNumber(
