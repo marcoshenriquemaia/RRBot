@@ -8,15 +8,21 @@ const ENV = {
   rr_id: process.env.rr_id,
   rr_add: process.env.rr_add,
 }
+
 const run = () => {
   Perks(ENV)
-  setTimeout(run, 60000 * 5)
+  try{
+    setTimeout(run, 60000 * 5)
+  } catch(err){
+    setTimeout(run, 60000 * 5)
+  }
 };
 
 try{
   run()
 } catch(err){
-  run()
 }
+
+run()
 
 console.log('INICIOU!', ENV)
