@@ -18,11 +18,8 @@ const run = () => {
   }
 };
 
-try{
-  run()
-} catch(err){
-}
-
 run()
+
+
 
 console.log('INICIOU!', ENV)
