@@ -38,28 +38,68 @@ const max = () => {};
 const type = () => {};
 
 const authConfig = (content) => {
-  content.reply(`Send me the new authentications in the following format, replacing the example values:
+  content.reply(`const RRBotGetAuth = () => {
+    const storageKeyList = ['rr', 'rr_f', 'rr_id', 'rr_add']
   
-rr = 3a0078b7cf609015fd9d239252157cfa3
-rr_f = 3a0078b7cf60r015fd9d23925277cfa3
-rr_id = 198761554754123
-rr_add = e3afngkedawew47f455ca4522f605df447
+    const readCookie = (name) => {
+      const nameEQ = name + "=";
+      const ca = document.cookie.split(';');
+      for(let i=0; i < ca.length;i++) {
+          let c = ca[i];
+          while (c.charAt(0)==' ') c = c.substring(1,c.length);
+          if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+      }
+      return null;
+    }
+  
+    function fallbackCopyTextToClipboard(text) {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      
+      // Avoid scrolling to bottom
+      textArea.style.top = "0";
+      textArea.style.left = "0";
+      textArea.style.position = "fixed";
+    
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+    
+      try {
+        const successful = document.execCommand('copy');
+        const msg = successful ? 'successful' : 'unsuccessful';
+        console.log('Copying text command was ' + msg + 'know, just paste to @RRTeslaBot');
+      } catch (err) {
+        console.error('Fallback: Oops, unable to copy', err);
+      }
+    
+      document.body.removeChild(textArea);
+    }
+  
+    const object = storageKeyList.reduce((acc, key) => ({ ...acc, [key]: readCookie(key) }) ,{})
+  
+    fallbackCopyTextToClipboard(JSON.stringify(object))
+  }
+  
+  RRBotGetAuth()
+  
+  
   `);
 };
 
 const buttonList = [
-  {
-    name: "Change perk",
-    action: "perk",
-  },
-  {
-    name: "Change perk max",
-    action: "max",
-  },
-  {
-    name: "Change perk payment type",
-    action: "type",
-  },
+  // {
+  //   name: "Change perk",
+  //   action: "perk",
+  // },
+  // {
+  //   name: "Change perk max",
+  //   action: "max",
+  // },
+  // {
+  //   name: "Change perk payment type",
+  //   action: "type",
+  // },
   {
     name: "Update authentication",
     action: "update_auth",
@@ -88,14 +128,8 @@ bot.on("text", (content) => {
       `I didn't find this command. Send /start to talk with me`
     );
 
-  if (message.includes("rr =")) {
-    const formatedAuthConfig = message.split(/\r?\n/).reduce((acc, item) => {
-      const splitedItem = item.split(' = ')
-      const key = splitedItem[0]
-      const value = splitedItem[1]
-
-      return { ...acc, [key]: value }
-    }, {})
+  if (message.includes(`"rr":`)) {
+    const formatedAuthConfig = JSON.parse(message)
 
     fs.writeFileSync(
       "config.json",
