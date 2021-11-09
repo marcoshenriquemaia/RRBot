@@ -85,17 +85,25 @@ const Perks = async (ENV) => {
   await page.exposeFunction("getNumber", getNumber);
 
   const up = await page.evaluate((info) => {
-    const perkSequence = ["F", "E", "R"];
+    let attempts = 0
 
+    const perkSequence = ["F", "E", "R"];
+    
     const getInfos = () => {
       return new Promise((resolve) => {
+
+        if (attempts === 20) return resolve("Token expired");
+
         const recursive = async () => {
           const $itemList = document.querySelectorAll(
             "#index_perks_list .perk_item.pointer.ib_border"
           );
           const $container = document.querySelector("#index_perks_list");
 
-          if (!$itemList[0]) return setTimeout(recursive, 100);
+          if (!$itemList[0]) {
+            setTimeout(recursive, 100)
+            return attempts++
+          };
 
           const itemPosition = perkSequence.indexOf(info.perk);
           const $item = $itemList[itemPosition];
@@ -103,7 +111,10 @@ const Perks = async (ENV) => {
 
           if ($hasTimer) return resolve("has timer");
 
-          if (!$item) return setTimeout(recursive, 100);
+          if (!$item) {
+            setTimeout(recursive, 100)
+            return attempts++
+          };
 
           const $currentPerkLevel = $item.querySelector(".yellow");
           const currentPerkLevel = await getNumber(
