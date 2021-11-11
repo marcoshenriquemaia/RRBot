@@ -6,8 +6,7 @@ const Perks = async (ENV) => {
   
   const browser = await puppeteer.launch({
     // headless: false,
-    ignoreHTTPSErrors :true,
-    args: ['--no-sandbox']
+    ignoreHTTPSErrors: true,
   });
   try {
     const page = await browser.newPage();
@@ -41,9 +40,9 @@ const Perks = async (ENV) => {
     await page.reload();
     console.log("antes do wait for selector");
 
-    // await page.waitForSelector(".prof_h #message", {
-    //   timeout: 30000,
-    // });
+    await page.waitForSelector(".prof_h #message", {
+      timeout: 30000,
+    });
 
     const info = await page.evaluate(async () => {
       let attempts = 0;
