@@ -39,9 +39,9 @@ const Perks = async (ENV) => {
     await page.reload();
     console.log("antes do wait for selector");
 
-    await page.waitForSelector(".prof_h #message", {
-      timeout: 30000,
-    });
+    // await page.waitForSelector(".prof_h #message", {
+    //   timeout: 30000,
+    // });
 
     const info = await page.evaluate(async () => {
       let attempts = 0;

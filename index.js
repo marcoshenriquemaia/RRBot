@@ -168,8 +168,8 @@ const run = async () => {
   if (currentMilli > nextUp || !nextUp) {
     const newNextUp = await Perks(ENV);
 
-    if (newNextUp === "Error") {
-      console.log("error");
+    if (typeof newNextUp === "string") {
+      console.log("error", newNextUp);
       log = `Error: ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
       setTimeout(run, 5000);
       return 
