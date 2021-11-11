@@ -162,6 +162,7 @@ bot.startPolling();
 const ENV = config;
 
 const run = async () => {
+  console.log('Running')
   const date = new Date();
   const currentMilli = date.getTime();
   if (currentMilli > nextUp || !nextUp) {

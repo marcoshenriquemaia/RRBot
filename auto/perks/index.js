@@ -189,6 +189,7 @@ const Perks = async (ENV) => {
     return up;
   } catch (error) {
     browser.close()
+    console.log(error.message)
     return 'Error'
   }
 };
