@@ -40,8 +40,9 @@ const Perks = async (ENV) => {
   console.log("antes do wait for timeout");
   await page.waitForTimeout(1000);
   
-  console.log("antes do wait for selector");
-  await page.waitForSelector(".prof_h #message");
+  const token = await page.waitForSelector(".prof_h #message", { timeout: 10000 });
+
+  console.log('token', token)
 
   const info = await page.evaluate(async () => {
     let attempts = 0;
