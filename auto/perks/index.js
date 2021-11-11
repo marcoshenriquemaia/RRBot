@@ -5,7 +5,7 @@ const Perks = async (ENV) => {
   const url = "https://rivalregions.com/#slide/profile";
 
   const browser = await puppeteer.launch({
-    // headless: false,
+    headless: false,
   });
   const page = await browser.newPage();
   await page.goto(url);
@@ -32,6 +32,7 @@ const Perks = async (ENV) => {
 
   await page.cookies(url);
   await page.reload();
+  await page.waitForTimeout(1000);
   const info = await page.evaluate(async () => {
     let attempts = 0;
 
@@ -69,6 +70,8 @@ const Perks = async (ENV) => {
       type: splitedData[2],
     };
   });
+
+  console.log(info)
 
   if (info === "Token expired") {
     browser.close();
