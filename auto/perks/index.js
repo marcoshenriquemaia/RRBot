@@ -8,9 +8,9 @@ const Perks = async (ENV) => {
     // headless: false,
   });
   const page = await browser.newPage();
-  console.log('antes do goTo')
+  console.log("antes do goTo");
   await page.goto(url);
-  console.log('antes do cookie')
+  console.log("antes do cookie");
   await page.setCookie(
     {
       name: "rr",
@@ -28,17 +28,20 @@ const Perks = async (ENV) => {
       name: "rr_add",
       value: ENV.rr_add,
     }
-    );
-    console.log('antes do close com time out')
-    
-    setTimeout(() => browser.close(), 60000 * 2);
-    
-    console.log('antes do close cookie url')
-    await page.cookies(url);
-    console.log('antes do close reload')
-    await page.reload();
-    console.log('antes do wait for timeout')
+  );
+  console.log("antes do close com time out");
+
+  setTimeout(() => browser.close(), 60000 * 2);
+
+  console.log("antes do close cookie url");
+  await page.cookies(url);
+  console.log("antes do close reload");
+  await page.reload();
+  console.log("antes do wait for timeout");
   await page.waitForTimeout(1000);
+  
+  console.log("antes do wait for selector");
+  await page.waitForSelector(".prof_h #message");
 
   const info = await page.evaluate(async () => {
     let attempts = 0;
@@ -78,7 +81,7 @@ const Perks = async (ENV) => {
     };
   });
 
-  console.log(info)
+  console.log(info);
 
   if (info === "Token expired") {
     browser.close();
@@ -95,7 +98,7 @@ const Perks = async (ENV) => {
   await page.goto("https://rivalregions.com/#overview");
   await page.reload();
   await page.exposeFunction("getNumber", getNumber);
-  await page.waitForSelector("#index_perks_list .perk_item.pointer.ib_border")
+  await page.waitForSelector("#index_perks_list .perk_item.pointer.ib_border");
 
   const up = await page.evaluate((info) => {
     let attempts = 0;
@@ -179,7 +182,7 @@ const Perks = async (ENV) => {
 
   setTimeout(() => browser.close(), 5000);
 
-  return up
+  return up;
 };
 
 export default Perks;
