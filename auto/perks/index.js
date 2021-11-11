@@ -6,6 +6,8 @@ const Perks = async (ENV) => {
   
   const browser = await puppeteer.launch({
     // headless: false,
+    ignoreHTTPSErrors :true,
+    args: ['--no-sandbox']
   });
   try {
     const page = await browser.newPage();
