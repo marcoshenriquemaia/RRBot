@@ -37,11 +37,10 @@ const Perks = async (ENV) => {
     await page.cookies(url);
     console.log("antes do close reload");
     await page.reload();
-    console.log("antes do wait for timeout");
-    await page.waitForTimeout(1000);
+    console.log("antes do wait for selector");
 
     await page.waitForSelector(".prof_h #message", {
-      timeout: 10000,
+      timeout: 30000,
     });
 
     const info = await page.evaluate(async () => {
