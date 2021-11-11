@@ -28,7 +28,7 @@ const Perks = async (ENV) => {
     }
   );
 
-  setTimeout(() => browser.close(), 30000);
+  setTimeout(() => browser.close(), 60000 * 2);
 
   await page.cookies(url);
   await page.reload();
