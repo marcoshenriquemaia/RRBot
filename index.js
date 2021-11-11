@@ -5,6 +5,10 @@ import fs from "fs";
 
 const config = JSON.parse(fs.readFileSync('config.json'))
 
+let nextUp = 0
+
+let log = 'Sem Log'
+
 dotenv.config();
 
 const perk = (content) => {
@@ -104,6 +108,10 @@ const buttonList = [
     name: "Update authentication",
     action: "update_auth",
   },
+  {
+    name: "Log",
+    action: "log",
+  },
 ];
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
@@ -145,18 +153,39 @@ bot.action("perk", perk);
 bot.action("max", max);
 bot.action("type", type);
 bot.action("update_auth", authConfig);
+bot.action("log", (content) => {
+  content.reply(log)
+});
 
 bot.startPolling();
 
 const ENV = config;
 
-const run = () => {
+const run = async () => {
+  const date = new Date()
+  const currentMilli = date.getTime()
   try {
-    Perks(ENV);
-    setTimeout(run, 60000 * 5);
+    if (currentMilli > nextUp || !nextUp) {
+      const newNextUp = await Perks(ENV);
+
+      nextUp = currentMilli + newNextUp + 40000
+
+      if (nextUp) {
+        log = `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
+      }
+    }
+    setTimeout(run, 5000);
   } catch (err) {
-    Perks(ENV);
-    setTimeout(run, 60000 * 5);
+    if (currentMilli > nextUp || !nextUp) {
+      const newNextUp = await Perks(ENV);
+
+      nextUp = currentMilli + newNextUp + 40000
+
+      if (nextUp) {
+        log = `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
+      }
+    }
+    setTimeout(run, 5000);
   }
 };
 

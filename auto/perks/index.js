@@ -28,6 +28,8 @@ const Perks = async (ENV) => {
     }
   );
 
+  setTimeout(() => browser.close(), 30000);
+
   await page.cookies(url);
   await page.reload();
   const info = await page.evaluate(async () => {
@@ -85,13 +87,12 @@ const Perks = async (ENV) => {
   await page.exposeFunction("getNumber", getNumber);
 
   const up = await page.evaluate((info) => {
-    let attempts = 0
+    let attempts = 0;
 
     const perkSequence = ["F", "E", "R"];
-    
+
     const getInfos = () => {
       return new Promise((resolve) => {
-
         if (attempts === 20) return resolve("Token expired");
 
         const recursive = async () => {
@@ -101,20 +102,31 @@ const Perks = async (ENV) => {
           const $container = document.querySelector("#index_perks_list");
 
           if (!$itemList[0]) {
-            setTimeout(recursive, 100)
-            return attempts++
-          };
+            setTimeout(recursive, 100);
+            return attempts++;
+          }
 
           const itemPosition = perkSequence.indexOf(info.perk);
           const $item = $itemList[itemPosition];
           const $hasTimer = $container.querySelector(".no_imp.hasCountdown");
 
-          if ($hasTimer) return resolve("has timer");
+          if ($hasTimer) {
+            const splitedHour = $hasTimer.textContent.split(":");
+            const hasHour = splitedHour.length === 3;
+
+            const milliseconds = hasHour
+              ? Number(splitedHour[2]) * 1000 +
+                Number(splitedHour[1]) * 60000 +
+                Number(splitedHour[0]) * 36000000
+              : Number(splitedHour[1]) * 1000 + Number(splitedHour[0]) * 60000;
+
+            return resolve(milliseconds);
+          }
 
           if (!$item) {
-            setTimeout(recursive, 100)
-            return attempts++
-          };
+            setTimeout(recursive, 100);
+            return attempts++;
+          }
 
           const $currentPerkLevel = $item.querySelector(".yellow");
           const currentPerkLevel = await getNumber(
@@ -134,7 +146,7 @@ const Perks = async (ENV) => {
             if (!$button) return setTimeout(recursive, 100);
 
             $button.click();
-            return resolve("Perk adicionado com dolar");
+            return resolve(10000);
           } else if (info.type === "G") {
             const $buttonWrapper = document.querySelectorAll(
               "#perk_target #perk_target_4 > div"
@@ -144,7 +156,7 @@ const Perks = async (ENV) => {
             if (!$button) return setTimeout(recursive, 100);
 
             $button.click();
-            return resolve("Perk adicionado com gold");
+            return resolve(10000);
           }
 
           resolve("Perk adicionado");
@@ -159,7 +171,9 @@ const Perks = async (ENV) => {
 
   console.log(up);
 
-  setTimeout(() => browser.close(), 3000);
+  setTimeout(() => browser.close(), 5000);
+
+  return up
 };
 
 export default Perks;
