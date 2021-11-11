@@ -5,7 +5,7 @@ const Perks = async (ENV) => {
   const url = "https://rivalregions.com/#slide/profile";
   
   const browser = await puppeteer.launch({
-    headless: false,
+    // headless: false,
   });
   try {
     const page = await browser.newPage();
