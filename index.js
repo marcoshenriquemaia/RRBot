@@ -3,11 +3,11 @@ import { Telegraf, Markup } from "telegraf";
 import Perks from "./auto/perks/index.js";
 import fs from "fs";
 
-const config = JSON.parse(fs.readFileSync('config.json'))
+const config = JSON.parse(fs.readFileSync("config.json"));
 
-let nextUp = 0
+let nextUp = 0;
 
-let log = 'Sem Log'
+let log = "Sem Log";
 
 dotenv.config();
 
@@ -137,16 +137,16 @@ bot.on("text", (content) => {
     );
 
   if (message.includes(`"rr":`)) {
-    const formatedAuthConfig = JSON.parse(message)
+    const formatedAuthConfig = JSON.parse(message);
 
     fs.writeFileSync(
       "config.json",
-      JSON.stringify({...config, ...formatedAuthConfig}),
+      JSON.stringify({ ...config, ...formatedAuthConfig }),
       console.log
     );
     return content.reply("Auth");
   }
-  return content.reply('Something wrong')
+  return content.reply("Something wrong");
 });
 
 bot.action("perk", perk);
@@ -154,7 +154,7 @@ bot.action("max", max);
 bot.action("type", type);
 bot.action("update_auth", authConfig);
 bot.action("log", (content) => {
-  content.reply(log)
+  content.reply(log);
 });
 
 bot.startPolling();
@@ -162,31 +162,25 @@ bot.startPolling();
 const ENV = config;
 
 const run = async () => {
-  const date = new Date()
-  const currentMilli = date.getTime()
-  try {
-    if (currentMilli > nextUp || !nextUp) {
-      const newNextUp = await Perks(ENV);
+  const date = new Date();
+  const currentMilli = date.getTime();
+  if (currentMilli > nextUp || !nextUp) {
+    const newNextUp = await Perks(ENV);
 
-      nextUp = currentMilli + newNextUp + 40000
-
-      if (nextUp) {
-        log = `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
-      }
+    if (newNextUp === "Error") {
+      console.log("error");
+      log = `Error: ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+      setTimeout(run, 5000);
+      return 
     }
-    setTimeout(run, 5000);
-  } catch (err) {
-    if (currentMilli > nextUp || !nextUp) {
-      const newNextUp = await Perks(ENV);
 
-      nextUp = currentMilli + newNextUp + 40000
+    nextUp = currentMilli + newNextUp + 40000;
 
-      if (nextUp) {
-        log = `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
-      }
+    if (nextUp) {
+      log = `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
     }
-    setTimeout(run, 5000);
   }
+  setTimeout(run, 5000);
 };
 
 run();
